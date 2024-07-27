@@ -1,84 +1,86 @@
 using System;
 
-// TODO: erase everything and do this problem again
 public static class TelemetryBuffer
 {
+    private static byte getPrefix(long number)
+    {
+        if (number > long.MaxValue)
+            return 8;
+        if (number > uint.MaxValue)
+            return 256 - 8;
+        if (number > int.MaxValue)
+            return 4;
+        if (number > ushort.MaxValue)
+            return 256 - 4;
+        if (number > -1)
+            return 2;
+        if (number >= short.MinValue)
+            return 256 - 2;
+        if (number >= int.MinValue)
+            return 256 - 4;
+        return 256 - 8;
+    }
+
     public static byte[] ToBuffer(long reading)
     {
-        byte[] buffer = new byte[9]; // this is smart
-        byte prefixByte;
-        byte[] valueBytes;
-
-        if (reading >= 4_294_967_296 && reading <= 9_223_372_036_854_775_807)
+        byte[] result = new byte[9];
+        result[0] = getPrefix(reading);
+        byte[] bytes = new byte[8];
+        // have to decide which number type to create proper Buffer
+        byte numberToCopy;
+        if (result[0] == 2 || result[0] == 254)
         {
-            // 0x00 - 8 bytes
-            prefixByte = 0xf8; // 8 bytes, signed
-            valueBytes = BitConverter.GetBytes((long)reading);
+            bytes = BitConverter.GetBytes((short)reading);
+            numberToCopy = 2;
         }
-        else if (reading >= 2_147_483_648 && reading <= 4_294_967_295)
+        else if (result[0] == 4 || result[0] == 252)
         {
-            // 0x00 + 4 bytes
-            prefixByte = 4; // 4 bytes, unsigned
-            valueBytes = BitConverter.GetBytes((uint)reading);
+            bytes = BitConverter.GetBytes((int)reading);
+            numberToCopy = 4;
         }
-        else if (
-            (reading >= 65_536 && reading <= 2_147_483_647)
-            || (reading >= -2_147_483_648 && reading <= -32_769)
-        )
+        else
         {
-            // 0x00 - 4 bytes
-            prefixByte = 0xfc; // 4 bytes, signed
-            valueBytes = BitConverter.GetBytes((int)reading);
+            bytes = BitConverter.GetBytes((long)reading);
+            numberToCopy = 8;
         }
-        else if (reading >= 0 && reading <= 65_535)
-        {
-            // 0x00 + 2 bytes
-            prefixByte = 2; // 2 bytes, unsigned
-            valueBytes = BitConverter.GetBytes((ushort)reading);
-        }
-        else if (reading >= -32_768 && reading <= -1)
-        {
-            // 0x00 - 2 bytes
-            prefixByte = 0xfe; // 2 bytes, signed
-            valueBytes = BitConverter.GetBytes((short)reading);
-        }
-        else // long
-        {
-            // 0x00 - 8 bytes
-            prefixByte = 0xf8; // 8 bytes, signed
-            valueBytes = BitConverter.GetBytes(reading);
-        }
-
-        buffer[0] = prefixByte;
-        Array.Copy(valueBytes, 0, buffer, 1, valueBytes.Length);
-        return buffer;
+        // bytes: source, 0: source start index, result: destination, 1: destination index, bytes.Length: number of items to copy
+        Array.Copy(bytes, 0, result, 1, numberToCopy);
+        return result;
     }
 
     public static long FromBuffer(byte[] buffer)
     {
-        if (buffer.Length < 9)
-            return 0;
+        byte prefix = buffer[0];
+        byte[] bytes = new byte[8];
+        Array.Copy(buffer, 1, bytes, 0, 8);
+        long result;
 
-        byte prefixByte = buffer[0];
-        int byteCount = prefixByte <= 8 ? prefixByte : 256 - prefixByte;
-
-        if (byteCount != 2 && byteCount != 4 && byteCount != 8)
-            return 0;
-
-        switch (prefixByte)
+        if (prefix == 2)
         {
-            case 2:
-                return BitConverter.ToUInt16(buffer, 1);
-            case 4:
-                return BitConverter.ToUInt32(buffer, 1);
-            case 0xfe:
-                return BitConverter.ToInt16(buffer, 1);
-            case 0xfc:
-                return BitConverter.ToInt32(buffer, 1);
-            case 0xf8:
-                return BitConverter.ToInt64(buffer, 1);
-            default:
-                return 0;
+            result = BitConverter.ToUInt16(bytes);
+            return result;
         }
+        else if (prefix == 256 - 2)
+        {
+            result = BitConverter.ToInt16(bytes);
+            return result;
+        }
+        else if (prefix == 4)
+        {
+            result = BitConverter.ToUInt32(bytes);
+            return result;
+        }
+        else if (prefix == 256 - 4)
+        {
+            result = BitConverter.ToInt32(bytes);
+            return result;
+        }
+        else if (prefix == 256 - 8)
+        {
+            result = BitConverter.ToInt64(bytes);
+            return result;
+        }
+
+        return 0L;
     }
 }
