@@ -1,5 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System;
+
 namespace Program
 {
     public class Program
@@ -15,6 +17,9 @@ namespace Program
             // INTEGRAL NUMBERS
 
             // IntegralNumbers();
+
+            // DICTIONARY
+            Dictionaries();
         }
 
         // ######################### INTEGRAL NUMBERS ###############################
@@ -47,6 +52,34 @@ namespace Program
 
             // >= than -9_223_372_036_854_775_808 will be a long -8
             Console.WriteLine(long.MinValue); // -9_223_372_036_854_775_808
+        }
+
+        private static void Dictionaries()
+        {
+            Dictionary<int, string> a = new Dictionary<int, string>();
+
+            Dictionary<int, string> b = new Dictionary<int, string> { [1] = "One", [2] = "Two" };
+
+            Dictionary<int, string> c = new Dictionary<int, string> { { 1, "One" }, { 2, "Two" } };
+
+            // Console.WriteLine(a[1]);
+            Console.WriteLine(b[1]);
+            Console.WriteLine(b[2]);
+            Console.WriteLine(c[1]);
+            Console.WriteLine(c[2]);
+            c[2] = "Khong dieu kien";
+            Console.WriteLine(c[2]);
+
+            Dictionary<string, string> d = new Dictionary<string, string>
+            {
+                ["Khong"] = "Khong",
+                ["Tai"] = "Tai",
+                ["Vi"] = "Vi",
+                ["Sao"] = "Sao",
+            };
+
+            Console.WriteLine(d.ContainsKey("Khong")); // true
+            Console.WriteLine(d.ContainsKey("Dieu")); // true
         }
     }
 
