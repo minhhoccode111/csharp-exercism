@@ -11,7 +11,6 @@ public enum LogLevel
     Fatal = 42
 }
 
-// TODO: learn this 
 public static class LogLine
 {
     public static LogLevel ParseLogLevel(string logLine)
