@@ -19,25 +19,25 @@ public enum AlertLevel
 public static class Appointment
 {
     private static readonly Dictionary<Location, (string windows, string linux)> dict =
-        new Dictionary<Location, (string windows, string linux)>
+        new Dictionary<Location, (string, string)>
         {
             { Location.NewYork, ("Eastern Standard Time", "America/New_York") },
-            { Location.London, ("GMT Standard Time", "Europe/London") },
             { Location.Paris, ("W. Europe Standard Time", "Europe/Paris") },
+            { Location.London, ("GMT Standard Time", "Europe/London") },
         };
 
     private static string GetId(Location location)
     {
-        if (!dict.TryGetValue(location, out var value))
+        if (dict.TryGetValue(location, out var timeZoneId))
         {
-            throw new ArgumentException();
+            if (OperatingSystem.IsWindows())
+            {
+                return timeZoneId.windows;
+            }
+            return timeZoneId.linux;
         }
 
-        if (OperatingSystem.IsWindows())
-        {
-            return value.windows;
-        }
-        return value.linux;
+        throw new ArgumentException();
     }
 
     public static DateTime ShowLocalTime(DateTime dtUtc)
@@ -47,70 +47,55 @@ public static class Appointment
 
     public static DateTime Schedule(string dtStr, Location location)
     {
-        DateTime dtLocal = DateTime.ParseExact(
+        DateTime localDateTime = DateTime.ParseExact(
             dtStr,
             "M/d/yyyy HH:mm:ss",
             CultureInfo.InvariantCulture
         );
 
-        TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(GetId(location));
+        TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(GetId(location));
 
-        return TimeZoneInfo.ConvertTimeToUtc(dtLocal, timeZone);
+        return TimeZoneInfo.ConvertTimeToUtc(localDateTime, timeZoneInfo);
     }
 
     public static DateTime GetAlertTime(DateTime appointment, AlertLevel alertLevel)
     {
-        switch (alertLevel)
+        return alertLevel switch
         {
-            case AlertLevel.Early:
-                return appointment.AddDays(-1);
-            case AlertLevel.Standard:
-                return appointment.AddHours(-1).AddMinutes(-45);
-            case AlertLevel.Late:
-                return appointment.AddMinutes(-30);
-            default:
-                throw new ArgumentException("Invalid alert level", nameof(alertLevel));
-        }
+            AlertLevel.Late => appointment.AddMinutes(-30),
+            AlertLevel.Standard => appointment.AddMinutes(-105),
+            AlertLevel.Early => appointment.AddMinutes(-(60 * 24)),
+            _ => throw new ArgumentException(),
+        };
     }
 
     public static bool HasDaylightSavingChanged(DateTime dt, Location location)
     {
-        TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(GetId(location));
-        DateTime start = dt.AddDays(-7);
-        DateTime end = dt;
+        DateTime sevenDaysAgo = dt.AddDays(-7);
+        TimeZoneInfo timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(GetId(location));
 
-        bool startDST = timeZone.IsDaylightSavingTime(start);
-        bool endDST = timeZone.IsDaylightSavingTime(end);
-
-        return startDST != endDST;
+        bool isDstNow = timeZoneInfo.IsDaylightSavingTime(dt);
+        bool isDstSevenDaysAgo = timeZoneInfo.IsDaylightSavingTime(sevenDaysAgo);
+        return isDstNow != isDstSevenDaysAgo;
     }
 
     public static DateTime NormalizeDateTime(string dtStr, Location location)
     {
-        string format;
-        CultureInfo culture;
-
-        switch (location)
+        if (location == Location.NewYork)
         {
-            case Location.NewYork:
-                format = "M/d/yyyy HH:mm:ss";
-                culture = new CultureInfo("en-US");
-                break;
-            case Location.London:
-            case Location.Paris:
-                format = "dd/MM/yyyy HH:mm:ss";
-                culture = new CultureInfo(location == Location.London ? "en-GB" : "fr-FR");
-                break;
-            default:
-                throw new ArgumentException("Invalid location", nameof(location));
+            try
+            {
+                return DateTime.ParseExact(
+                    dtStr,
+                    "M/d/yyyy HH:mm:ss",
+                    CultureInfo.InvariantCulture
+                );
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
-
-        if (
-            DateTime.TryParseExact(dtStr, format, culture, DateTimeStyles.None, out DateTime result)
-        )
-        {
-            return result;
-        }
-        return new DateTime(1, 1, 1, 0, 0, 0);
+        return DateTime.ParseExact(dtStr, "d/M/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
     }
 }
