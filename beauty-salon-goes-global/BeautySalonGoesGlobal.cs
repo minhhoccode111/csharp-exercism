@@ -47,36 +47,70 @@ public static class Appointment
 
     public static DateTime Schedule(string dtStr, Location location)
     {
-        DateTime dtUtc = DateTime.ParseExact(
+        DateTime dtLocal = DateTime.ParseExact(
             dtStr,
             "M/d/yyyy HH:mm:ss",
-            CultureInfo.InvariantCulture,
-            DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal
+            CultureInfo.InvariantCulture
         );
 
         TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(GetId(location));
 
-        return TimeZoneInfo.ConvertTimeFromUtc(dtUtc, timeZone);
+        return TimeZoneInfo.ConvertTimeToUtc(dtLocal, timeZone);
     }
 
     public static DateTime GetAlertTime(DateTime appointment, AlertLevel alertLevel)
     {
-        throw new NotImplementedException(
-            "Please implement the (static) Appointment.GetAlertTime() method"
-        );
+        switch (alertLevel)
+        {
+            case AlertLevel.Early:
+                return appointment.AddDays(-1);
+            case AlertLevel.Standard:
+                return appointment.AddHours(-1).AddMinutes(-45);
+            case AlertLevel.Late:
+                return appointment.AddMinutes(-30);
+            default:
+                throw new ArgumentException("Invalid alert level", nameof(alertLevel));
+        }
     }
 
     public static bool HasDaylightSavingChanged(DateTime dt, Location location)
     {
-        throw new NotImplementedException(
-            "Please implement the (static) Appointment.HasDaylightSavingChanged() method"
-        );
+        TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(GetId(location));
+        DateTime start = dt.AddDays(-7);
+        DateTime end = dt;
+
+        bool startDST = timeZone.IsDaylightSavingTime(start);
+        bool endDST = timeZone.IsDaylightSavingTime(end);
+
+        return startDST != endDST;
     }
 
     public static DateTime NormalizeDateTime(string dtStr, Location location)
     {
-        throw new NotImplementedException(
-            "Please implement the (static) Appointment.NormalizeDateTime() method"
-        );
+        string format;
+        CultureInfo culture;
+
+        switch (location)
+        {
+            case Location.NewYork:
+                format = "M/d/yyyy HH:mm:ss";
+                culture = new CultureInfo("en-US");
+                break;
+            case Location.London:
+            case Location.Paris:
+                format = "dd/MM/yyyy HH:mm:ss";
+                culture = new CultureInfo(location == Location.London ? "en-GB" : "fr-FR");
+                break;
+            default:
+                throw new ArgumentException("Invalid location", nameof(location));
+        }
+
+        if (
+            DateTime.TryParseExact(dtStr, format, culture, DateTimeStyles.None, out DateTime result)
+        )
+        {
+            return result;
+        }
+        return new DateTime(1, 1, 1, 0, 0, 0);
     }
 }
