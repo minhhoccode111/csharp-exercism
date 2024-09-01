@@ -1,115 +1,83 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-public struct Coord : IComparable<Coord>
+public readonly struct Coord : IEquatable<Coord>
 {
+    public ushort X { get; }
+    public ushort Y { get; }
+
     public Coord(ushort x, ushort y)
     {
         X = x;
         Y = y;
     }
 
-    public ushort X { get; }
-    public ushort Y { get; }
+    public override int GetHashCode() => HashCode.Combine(X, Y);
 
-    public override int GetHashCode()
-    {
-        return X.GetHashCode() ^ Y.GetHashCode();
-    }
+    public bool Equals(Coord other) => X == other.X && Y == other.Y;
 
-    public override bool Equals(Object obj)
-    {
-        if (obj is Coord convertedObj)
-        {
-            return convertedObj.GetHashCode() == this.GetHashCode();
-        }
-        return false;
-    }
+    public override bool Equals(object obj) => obj is Coord other && Equals(other);
 
-    public int CompareTo(Coord other)
-    {
-        if (X > other.X || Y > other.Y)
-            return -1;
-        if (X < other.X || Y < other.Y)
-            return 1;
-        return 0;
-    }
+    public static bool operator ==(Coord left, Coord right) => left.Equals(right);
+
+    public static bool operator !=(Coord left, Coord right) => !(left == right);
 }
 
-public struct Plot : IComparable<Plot>
+public readonly struct Plot : IEquatable<Plot>
 {
-    public readonly Coord C1;
-    public readonly Coord C2;
-    public readonly Coord C3;
-    public readonly Coord C4;
+    public Coord C1 { get; }
+    public Coord C2 { get; }
+    public Coord C3 { get; }
+    public Coord C4 { get; }
 
     public Plot(Coord c1, Coord c2, Coord c3, Coord c4)
     {
-        this.C1 = c1;
-        this.C2 = c2;
-        this.C3 = c3;
-        this.C4 = c4;
+        C1 = c1;
+        C2 = c2;
+        C3 = c3;
+        C4 = c4;
     }
 
-    public override int GetHashCode()
-    {
-        return C1.GetHashCode() ^ C2.GetHashCode() ^ C3.GetHashCode() ^ C4.GetHashCode();
-    }
+    public override int GetHashCode() => HashCode.Combine(C1, C2, C3, C4);
 
-    public override bool Equals(Object obj)
-    {
-        if (obj is Plot convertedObj)
+    public bool Equals(Plot other) =>
+        C1 == other.C1 && C2 == other.C2 && C3 == other.C3 && C4 == other.C4;
+
+    public override bool Equals(object obj) => obj is Plot other && Equals(other);
+
+    public static bool operator ==(Plot left, Plot right) => left.Equals(right);
+
+    public static bool operator !=(Plot left, Plot right) => !(left == right);
+
+    public int LongestSide =>
+        new[]
         {
-            return convertedObj.C1.Equals(C1)
-                && convertedObj.C2.Equals(C2)
-                && convertedObj.C3.Equals(C3)
-                && convertedObj.C4.Equals(C4);
-        }
-        return false;
-    }
+            Distance(C1, C2),
+            Distance(C2, C3),
+            Distance(C3, C4),
+            Distance(C4, C1),
+            Distance(C1, C3),
+            Distance(C2, C4),
+        }.Max();
 
-    private int getAllYs()
-    {
-        return C1.Y + C2.Y + C3.Y + C4.Y;
-    }
-
-    private int getAllXs()
-    {
-        return C1.X + C2.X + C3.X + C4.X;
-    }
-
-    public int CompareTo(Plot other)
-    {
-        if (getAllXs() + getAllYs() > other.getAllYs() + other.getAllXs())
-            return -1;
-        if (getAllXs() + getAllYs() < other.getAllYs() + other.getAllXs())
-            return 1;
-        return 0;
-    }
+    private static int Distance(Coord a, Coord b) =>
+        (int)Math.Sqrt(Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
 }
 
 public class ClaimsHandler
 {
-    private List<Plot> _plot = new List<Plot>();
+    private readonly List<Plot> _plots = new List<Plot>();
 
     public void StakeClaim(Plot plot)
     {
-        _plot.Add(plot);
+        _plots.Add(plot);
     }
 
-    public bool IsClaimStaked(Plot plot)
-    {
-        return _plot[_plot.Count - 1].Equals(plot);
-    }
+    public bool IsClaimStaked(Plot plot) => _plots.Contains(plot);
 
-    public bool IsLastClaim(Plot plot)
-    {
-        return _plot[_plot.Count - 1].Equals(plot);
-    }
+    public bool IsLastClaim(Plot plot) => _plots.LastOrDefault() == plot;
 
-    public Plot GetClaimWithLongestSide()
-    {
-        _plot.Sort();
-        return _plot[0];
-    }
+    public Plot GetClaimWithLongestSide() =>
+        _plots.OrderByDescending(p => p.LongestSide).FirstOrDefault();
 }
