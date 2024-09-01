@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
-public struct Coord
+public struct Coord : IComparable<Coord>
 {
     public Coord(ushort x, ushort y)
     {
@@ -26,9 +25,18 @@ public struct Coord
         }
         return false;
     }
+
+    public int CompareTo(Coord other)
+    {
+        if (X > other.X || Y > other.Y)
+            return -1;
+        if (X < other.X || Y < other.Y)
+            return 1;
+        return 0;
+    }
 }
 
-public struct Plot
+public struct Plot : IComparable<Plot>
 {
     public readonly Coord C1;
     public readonly Coord C2;
@@ -52,37 +60,56 @@ public struct Plot
     {
         if (obj is Plot convertedObj)
         {
-            return convertedObj.GetHashCode() == this.GetHashCode();
+            return convertedObj.C1.Equals(C1)
+                && convertedObj.C2.Equals(C2)
+                && convertedObj.C3.Equals(C3)
+                && convertedObj.C4.Equals(C4);
         }
         return false;
+    }
+
+    private int getAllYs()
+    {
+        return C1.Y + C2.Y + C3.Y + C4.Y;
+    }
+
+    private int getAllXs()
+    {
+        return C1.X + C2.X + C3.X + C4.X;
+    }
+
+    public int CompareTo(Plot other)
+    {
+        if (getAllXs() + getAllYs() > other.getAllYs() + other.getAllXs())
+            return -1;
+        if (getAllXs() + getAllYs() < other.getAllYs() + other.getAllXs())
+            return 1;
+        return 0;
     }
 }
 
 public class ClaimsHandler
 {
-    private Plot _plot;
+    private List<Plot> _plot = new List<Plot>();
 
     public void StakeClaim(Plot plot)
     {
-        _plot = plot;
+        _plot.Add(plot);
     }
 
     public bool IsClaimStaked(Plot plot)
     {
-        return _plot.Equals(plot);
+        return _plot[_plot.Count - 1].Equals(plot);
     }
 
     public bool IsLastClaim(Plot plot)
     {
-        throw new NotImplementedException(
-            "Please implement the ClaimsHandler.IsLastClaim() method"
-        );
+        return _plot[_plot.Count - 1].Equals(plot);
     }
 
     public Plot GetClaimWithLongestSide()
     {
-        throw new NotImplementedException(
-            "Please implement the ClaimsHandler.GetClaimWithLongestSide() method"
-        );
+        _plot.Sort();
+        return _plot[0];
     }
 }

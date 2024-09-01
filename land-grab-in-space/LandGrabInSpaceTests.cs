@@ -89,7 +89,7 @@ public class LandGrabInSpaceTests
         Assert.Equal(longer, ch.GetClaimWithLongestSide());
     }
 
-    [Fact(Skip = "asd")]
+    [Fact]
     [Task(4)]
     public void GetLongestSideReverseInsertionOrder()
     {
@@ -111,7 +111,7 @@ public class LandGrabInSpaceTests
         Assert.Equal(longer, ch.GetClaimWithLongestSide());
     }
 
-    [Fact(Skip = "asd")]
+    [Fact]
     [Task(4)]
     public void GetLongestSideDiagonal1()
     {
