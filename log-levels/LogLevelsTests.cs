@@ -1,5 +1,5 @@
-using Xunit;
 using Exercism.Tests;
+using Xunit;
 
 public class LogLevelsTests
 {
@@ -63,7 +63,10 @@ public class LogLevelsTests
     [Task(3)]
     public void Warning_reformat()
     {
-        Assert.Equal("Decreased performance (warning)", LogLine.Reformat("[WARNING]: Decreased performance"));
+        Assert.Equal(
+            "Decreased performance (warning)",
+            LogLine.Reformat("[WARNING]: Decreased performance")
+        );
     }
 
     [Fact]
@@ -77,6 +80,9 @@ public class LogLevelsTests
     [Task(3)]
     public void Reformat_with_leading_and_trailing_white_space()
     {
-        Assert.Equal("Corrupt disk (error)", LogLine.Reformat("[ERROR]: \t Corrupt disk\t \t \r\n"));
+        Assert.Equal(
+            "Corrupt disk (error)",
+            LogLine.Reformat("[ERROR]: \t Corrupt disk\t \t \r\n")
+        );
     }
 }

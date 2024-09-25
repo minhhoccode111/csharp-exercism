@@ -1,33 +1,16 @@
-using System;
-
 public static class LogAnalysis
 {
-    // public string SubstringAfter() // this cause the error below
-    // LogAnalysis.cs|5 col 19-33 error| 'SubstringAfter': cannot declare instance members in a static class
+    public static string SubstringAfter(this string str, string div) => str.Split(div)[1];
 
-    public static string SubstringAfter(this string current, string sub)
+    public static string SubstringBetween(this string str, string div1, string div2)
     {
-        int indexOfSub = current.IndexOf(sub);
-        return current.Substring(indexOfSub + sub.Length);
+        int start = str.IndexOf(div1) + div1.Length;
+        int length = str.IndexOf(div2) - start;
+        return str.Substring(start, length);
     }
 
-    public static string SubstringBetween(this string current, string startStr, string endStr)
-    {
-        int startIndex = current.IndexOf(startStr) + startStr.Length;
-        int endIndex = current.IndexOf(endStr);
+    public static string Message(this string str) => str.Split(":")[1].Trim();
 
-        return current.Substring(startIndex, endIndex - startIndex);
-    }
-
-    public static string Message(this string current)
-    {
-        return current.SubstringAfter(":").Trim();
-    }
-
-    public static string LogLevel(this string current)
-    {
-        // reuse method above
-        return current.SubstringBetween("[", "]");
-    }
+    public static string LogLevel(this string str) => str.SubstringBetween("[", "]");
 }
 
