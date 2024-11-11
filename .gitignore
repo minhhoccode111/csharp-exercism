@@ -1,7 +1,14 @@
-# ignore everything in sub dir
-*/*
+# # ignore everything in sub dir
+# */*
+# # but those files
+# !*/README.md
+# !*/HELP.md
+# !*/HINTS.md
+# !*/*.cs
+# !*/*.csproj
+# !*/*.test.cs
+# !*/.exercism
 
-# but those files
-!*/README.md
-!*/*.cs
-!*/*.test.cs
+# or we can just ignore bin/ and obj/
+*/bin
+*/obj
