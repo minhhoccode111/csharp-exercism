@@ -2,40 +2,30 @@ using System;
 
 static class AssemblyLine
 {
-    private static ushort _cars = 221;
+    private static double BaseSpeed = 221.0;
 
     public static double SuccessRate(int speed)
     {
-        if (speed == 0)
+        if (speed == 10)
         {
-            return 0;
-        }
-        if (speed < 5)
-        {
-            return 1;
-        }
-        if (speed < 9)
-        {
-            return 0.9;
+            return 0.77;
         }
         if (speed == 9)
         {
             return 0.8;
         }
-        return 0.77;
+        if (speed >= 5 && speed <= 8)
+        {
+            return 0.9;
+        }
+        if (speed >= 1 && speed <= 4)
+        {
+            return 1;
+        }
+        return 0;
     }
 
-    public static double ProductionRatePerHour(int speed)
-    {
-        double rate = SuccessRate(speed);
-        int produceCars = _cars * speed;
+    public static double ProductionRatePerHour(int speed) => SuccessRate(speed) * speed * BaseSpeed;
 
-        return produceCars * rate;
-    }
-
-    public static int WorkingItemsPerMinute(int speed)
-    {
-        double successProduce = ProductionRatePerHour(speed);
-        return (int)successProduce / 60;
-    }
+    public static int WorkingItemsPerMinute(int speed) => (int)ProductionRatePerHour(speed) / 60;
 }
