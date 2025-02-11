@@ -1,5 +1,5 @@
-using Exercism.Tests;
 using Xunit;
+using Exercism.Tests;
 
 public class ElonsToysTests
 {

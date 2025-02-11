@@ -1,39 +1,24 @@
-// using System;
+using System;
 
 class RemoteControlCar
 {
-    // init on each instance
-    private int _batteriesPercent = 100;
-    private int _drivenDistance = 0;
+    private int distance = 0;
+    private int battery = 100;
+    private int distancePerBattery = 20;
 
-    private const int _onePercentDistance = 20;
+    public static RemoteControlCar Buy() => new RemoteControlCar();
 
-    public static RemoteControlCar Buy()
-    {
-        return new RemoteControlCar();
-    }
+    public string DistanceDisplay() => $"Driven {distance} meters";
 
-    public string DistanceDisplay()
-    {
-        return $"Driven {_drivenDistance} meters";
-    }
-
-    public string BatteryDisplay()
-    {
-        if (_batteriesPercent < 1)
-        {
-            return "Battery empty";
-        }
-        return $"Battery at {_batteriesPercent}%";
-    }
+    public string BatteryDisplay() => battery > 0 ? $"Battery at {battery}%" : "Battery empty";
 
     public void Drive()
     {
-        if (_batteriesPercent < 1)
+        if (battery == 0)
         {
             return;
         }
-        _drivenDistance += _onePercentDistance;
-        _batteriesPercent--;
+        distance += distancePerBattery;
+        battery--;
     }
 }
