@@ -1,5 +1,5 @@
-using Xunit;
 using Exercism.Tests;
+using Xunit;
 
 public class NeedForSpeedTests
 {

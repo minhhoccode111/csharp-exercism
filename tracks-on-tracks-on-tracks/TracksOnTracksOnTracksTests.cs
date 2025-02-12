@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Xunit;
 using Exercism.Tests;
+using Xunit;
 
 public class TracksOnTracksOnTracksTests
 {

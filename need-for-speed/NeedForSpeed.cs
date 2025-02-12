@@ -1,56 +1,48 @@
-using System;
-
 class RemoteControlCar
 {
-    public int speed;
-    public int batteryDrain;
-
-    private int _batteryLeft = 100;
-    private int _travelDistance = 0;
+    private int _speed { get; set; }
+    private int _batteryDrain { get; set; }
+    private int _distance { get; set; } = 0;
+    private int _battery { get; set; } = 100;
 
     public RemoteControlCar(int speed, int batteryDrain)
     {
-        this.speed = speed;
-        this.batteryDrain = batteryDrain;
+        _speed = speed;
+        _batteryDrain = batteryDrain;
     }
 
-    public bool BatteryDrained()
-    {
-        return _batteryLeft < batteryDrain;
-    }
+    public bool BatteryDrained() => _battery < _batteryDrain;
 
-    public int DistanceDriven()
-    {
-        return _travelDistance;
-    }
+    public int DistanceDriven() => _distance;
 
     public void Drive()
     {
-        if (!BatteryDrained())
+        _battery -= _batteryDrain;
+        if (_battery < 0)
         {
-            _travelDistance += speed;
-            _batteryLeft -= batteryDrain;
+            return;
         }
+        _distance += _speed;
     }
 
-    public static RemoteControlCar Nitro()
-    {
-        return new RemoteControlCar(50, 4);
-    }
+    public static RemoteControlCar Nitro() => new RemoteControlCar(50, 4);
 }
 
 class RaceTrack
 {
-    private int distance;
+    private int _distance { get; set; }
 
     public RaceTrack(int distance)
     {
-        this.distance = distance;
+        _distance = distance;
     }
 
     public bool TryFinishTrack(RemoteControlCar car)
     {
-        int carDistance = 100 / car.batteryDrain * car.speed;
-        return !(carDistance < distance);
+        while (!car.BatteryDrained())
+        {
+            car.Drive();
+        }
+        return car.DistanceDriven() >= _distance;
     }
 }
