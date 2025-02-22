@@ -1,14 +1,14 @@
-using Xunit;
-using Exercism.Tests;
 using System;
 using System.Globalization;
 using System.Threading;
+using Exercism.Tests;
+using Xunit;
 
 public class BookingUpForBeautyTests
 {
     public BookingUpForBeautyTests()
     {
-        var enUsCulture = new CultureInfo("en-US");
+        var enUsCulture = CultureInfo.GetCultureInfo("en-US");
         Thread.CurrentThread.CurrentCulture = enUsCulture;
         Thread.CurrentThread.CurrentUICulture = enUsCulture;
     }
@@ -17,21 +17,30 @@ public class BookingUpForBeautyTests
     [Task(1)]
     public void Schedule_date_using_only_numbers()
     {
-        Assert.Equal(new DateTime(2019, 07, 25, 13, 45, 0), Appointment.Schedule("7/25/2019 13:45:00"));
+        Assert.Equal(
+            new DateTime(2019, 07, 25, 13, 45, 0),
+            Appointment.Schedule("7/25/2019 13:45:00")
+        );
     }
 
     [Fact]
     [Task(1)]
     public void Schedule_date_with_textual_month()
     {
-        Assert.Equal(new DateTime(2019, 6, 3, 11, 30, 0), Appointment.Schedule("June 3, 2019 11:30:00"));
+        Assert.Equal(
+            new DateTime(2019, 6, 3, 11, 30, 0),
+            Appointment.Schedule("June 3, 2019 11:30:00")
+        );
     }
 
     [Fact]
     [Task(1)]
     public void Schedule_date_with_textual_month_and_weekday()
     {
-        Assert.Equal(new DateTime(2019, 12, 5, 9, 0, 0), Appointment.Schedule("Thursday, December 5, 2019 09:00:00"));
+        Assert.Equal(
+            new DateTime(2019, 12, 5, 9, 0, 0),
+            Appointment.Schedule("Thursday, December 5, 2019 09:00:00")
+        );
     }
 
     [Fact]
@@ -164,21 +173,30 @@ public class BookingUpForBeautyTests
     [Task(4)]
     public void Description_on_friday_afternoon()
     {
-        Assert.Equal("You have an appointment on 3/29/2019 3:00:00 PM.", Appointment.Description(new DateTime(2019, 03, 29, 15, 0, 0)).Replace('\u202F', ' '));
+        Assert.Equal(
+            "You have an appointment on 3/29/2019 3:00:00 PM.",
+            Appointment.Description(new DateTime(2019, 03, 29, 15, 0, 0)).Replace('\u202F', ' ')
+        );
     }
 
     [Fact]
     [Task(4)]
     public void Description_on_thursday_afternoon()
     {
-        Assert.Equal("You have an appointment on 7/25/2019 1:45:00 PM.", Appointment.Description(new DateTime(2019, 07, 25, 13, 45, 0)).Replace('\u202F', ' '));
+        Assert.Equal(
+            "You have an appointment on 7/25/2019 1:45:00 PM.",
+            Appointment.Description(new DateTime(2019, 07, 25, 13, 45, 0)).Replace('\u202F', ' ')
+        );
     }
 
     [Fact]
     [Task(4)]
     public void Description_on_wednesday_morning()
     {
-        Assert.Equal("You have an appointment on 9/9/2020 9:09:09 AM.", Appointment.Description(new DateTime(2020, 9, 9, 9, 9, 9)).Replace('\u202F', ' '));
+        Assert.Equal(
+            "You have an appointment on 9/9/2020 9:09:09 AM.",
+            Appointment.Description(new DateTime(2020, 9, 9, 9, 9, 9)).Replace('\u202F', ' ')
+        );
     }
 
     [Fact]
