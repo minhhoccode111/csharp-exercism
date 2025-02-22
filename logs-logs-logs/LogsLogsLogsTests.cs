@@ -1,5 +1,5 @@
-using Xunit;
 using Exercism.Tests;
+using Xunit;
 
 public class LogsLogsLogsTests
 {
@@ -7,7 +7,10 @@ public class LogsLogsLogsTests
     [Task(1)]
     public void Parse_trace()
     {
-        Assert.Equal(LogLevel.Trace, LogLine.ParseLogLevel("[TRC]: Line 84 - Console.WriteLine('Hello World');"));
+        Assert.Equal(
+            LogLevel.Trace,
+            LogLine.ParseLogLevel("[TRC]: Line 84 - Console.WriteLine('Hello World');")
+        );
     }
 
     [Fact]
@@ -49,21 +52,33 @@ public class LogsLogsLogsTests
     [Task(2)]
     public void Parse_unknown()
     {
-        Assert.Equal(LogLevel.Unknown, LogLine.ParseLogLevel("[XYZ]: Gibberish message.. beep boop.."));
+        Assert.Equal(
+            LogLevel.Unknown,
+            LogLine.ParseLogLevel("[XYZ]: Gibberish message.. beep boop..")
+        );
     }
 
     [Fact]
     [Task(3)]
     public void Output_for_short_log_for_trace()
     {
-        Assert.Equal("1:Line 13 - int myNum = 42;", LogLine.OutputForShortLog(LogLevel.Trace, "Line 13 - int myNum = 42;"));
+        Assert.Equal(
+            "1:Line 13 - int myNum = 42;",
+            LogLine.OutputForShortLog(LogLevel.Trace, "Line 13 - int myNum = 42;")
+        );
     }
 
     [Fact]
     [Task(3)]
     public void Output_for_short_log_for_debug()
     {
-        Assert.Equal("2:The name 'LogLevel' does not exist in the current context", LogLine.OutputForShortLog(LogLevel.Debug, "The name 'LogLevel' does not exist in the current context"));
+        Assert.Equal(
+            "2:The name 'LogLevel' does not exist in the current context",
+            LogLine.OutputForShortLog(
+                LogLevel.Debug,
+                "The name 'LogLevel' does not exist in the current context"
+            )
+        );
     }
 
     [Fact]
@@ -77,27 +92,39 @@ public class LogsLogsLogsTests
     [Task(3)]
     public void Output_for_short_log_for_warning()
     {
-        Assert.Equal("5:Unsafe password", LogLine.OutputForShortLog(LogLevel.Warning, "Unsafe password"));
+        Assert.Equal(
+            "5:Unsafe password",
+            LogLine.OutputForShortLog(LogLevel.Warning, "Unsafe password")
+        );
     }
 
     [Fact]
     [Task(3)]
     public void Output_for_short_log_for_error()
     {
-        Assert.Equal("6:Stack overflow", LogLine.OutputForShortLog(LogLevel.Error, "Stack overflow"));
+        Assert.Equal(
+            "6:Stack overflow",
+            LogLine.OutputForShortLog(LogLevel.Error, "Stack overflow")
+        );
     }
 
     [Fact]
     [Task(3)]
     public void Output_for_short_log_for_fatal()
     {
-        Assert.Equal("42:Dumping all files", LogLine.OutputForShortLog(LogLevel.Fatal, "Dumping all files"));
+        Assert.Equal(
+            "42:Dumping all files",
+            LogLine.OutputForShortLog(LogLevel.Fatal, "Dumping all files")
+        );
     }
 
     [Fact]
     [Task(3)]
     public void Output_for_short_log_for_unknown()
     {
-        Assert.Equal("0:Something unknown happened", LogLine.OutputForShortLog(LogLevel.Unknown, "Something unknown happened"));
+        Assert.Equal(
+            "0:Something unknown happened",
+            LogLine.OutputForShortLog(LogLevel.Unknown, "Something unknown happened")
+        );
     }
 }

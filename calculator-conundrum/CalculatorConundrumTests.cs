@@ -1,6 +1,6 @@
-using Xunit;
-using Exercism.Tests;
 using System;
+using Exercism.Tests;
+using Xunit;
 
 public class CalculatorConundrumTests
 {

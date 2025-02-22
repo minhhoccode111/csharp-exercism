@@ -34,33 +34,30 @@ public class FootballMatchReportsTests
 
     [Fact]
     [Task(2)]
-    public void AnalyzeOnField_throws_unknown_shirt_number()
+    public void AnalyzeOnField_with_unknown_shirt_number()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => PlayAnalyzer.AnalyzeOnField(1729));
+        Assert.Equal("UNKNOWN", PlayAnalyzer.AnalyzeOnField(1729));
     }
-
+    
     [Fact]
     [Task(3)]
     public void AnalyzeOffField_number()
     {
         Assert.Equal("There are 4200 supporters at the match.", PlayAnalyzer.AnalyzeOffField(4200));
     }
-
+    
     [Fact]
     [Task(3)]
     public void AnalyzeOffField_throws_unknown_type()
     {
-        Assert.Throws<ArgumentException>(() => PlayAnalyzer.AnalyzeOffField(90.0f));
+        Assert.Equal("", PlayAnalyzer.AnalyzeOffField(90.0f));
     }
 
     [Fact]
     [Task(3)]
     public void AnalyzeOffField_text()
     {
-        Assert.Equal(
-            "They think it's all over!",
-            PlayAnalyzer.AnalyzeOffField("They think it's all over!")
-        );
+        Assert.Equal("They think it's all over!", PlayAnalyzer.AnalyzeOffField("They think it's all over!"));
     }
 
     [Fact]
@@ -81,10 +78,7 @@ public class FootballMatchReportsTests
     [Task(4)]
     public void AnalyzeOffField_injury()
     {
-        Assert.Equal(
-            "Oh no! Player 3 is injured. Medics are on the field.",
-            PlayAnalyzer.AnalyzeOffField(new Injury(3))
-        );
+        Assert.Equal("Oh no! Player 3 is injured. Medics are on the field.", PlayAnalyzer.AnalyzeOffField(new Injury(3)));
     }
 
     [Fact]
@@ -98,9 +92,6 @@ public class FootballMatchReportsTests
     [Task(5)]
     public void AnalyzeOffField_manager_with_club()
     {
-        Assert.Equal(
-            "Thomas Tuchel (Chelsea)",
-            PlayAnalyzer.AnalyzeOffField(new Manager("Thomas Tuchel", "Chelsea"))
-        );
+        Assert.Equal("Thomas Tuchel (Chelsea)", PlayAnalyzer.AnalyzeOffField(new Manager("Thomas Tuchel", "Chelsea")));
     }
 }

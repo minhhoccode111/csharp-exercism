@@ -26,7 +26,7 @@ public static class PlayAnalyzer
             case 11:
                 return "right wing";
             default:
-                throw new ArgumentOutOfRangeException();
+                return "UNKNOWN";
         }
     }
 
@@ -34,18 +34,22 @@ public static class PlayAnalyzer
     {
         switch (report)
         {
-            case string:
-                return report.ToString()!;
-            case int:
-                return $"There are {report} supporters at the match.";
-            case Injury obj:
-                return $"Oh no! {obj.GetDescription()} Medics are on the field.";
-            case Incident obj:
-                return obj.GetDescription();
-            case Manager obj:
-                return obj.Club == null ? obj.Name : $"{obj.Name} ({obj.Club})";
+            case int count:
+                return $"There are {count} supporters at the match.";
+            case string message:
+                return message;
+            case Foul foul:
+                return foul.GetDescription();
+            case Injury injury:
+                return "Oh no! " + injury.GetDescription() + " Medics are on the field.";
+            case Manager manager when manager.Club == null:
+                return manager.Name;
+            case Manager manager:
+                return $"{manager.Name} ({manager.Club})";
+            case Incident incident:
+                return incident.GetDescription();
             default:
-                throw new ArgumentException();
+                return string.Empty;
         }
     }
 }

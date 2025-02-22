@@ -1,10 +1,8 @@
 public static class SimpleOperation
 {
-    public static int Division(int o1, int o2) => o1 / o2;
+    public static int Division(int operand1, int operand2) => operand1 / operand2;
 
-    public static int Multiplication(int o1, int o2) => o1 * o2;
+    public static int Multiplication(int operand1, int operand2) => operand1 * operand2;
 
-    public static int Addition(int o1, int o2) => o1 + o2;
-
-    public static int Substraction(int o1, int o2) => o1 - o2;
+    public static int Addition(int operand1, int operand2) => operand1 + operand2;
 }
