@@ -1,6 +1,4 @@
-using System;
 using Exercism.Tests;
-using Xunit;
 
 [UseCulture]
 public class WeighingMachineTests
@@ -31,15 +29,6 @@ public class WeighingMachineTests
     }
 
     [Fact]
-    [Task(5)]
-    public void Apply_Default_tare_adjustment_and_get_display_weight()
-    {
-        var wm = new WeighingMachine(precision: 3);
-        wm.Weight = 100.567;
-        Assert.Equal("95.567 kg", wm.DisplayWeight);
-    }
-
-    [Fact]
     [Task(3)]
     public void Negative_weight_is_invalid()
     {
@@ -65,6 +54,15 @@ public class WeighingMachineTests
         wm.Weight = 100.770;
         wm.TareAdjustment = 10;
         Assert.Equal("90.8 kg", wm.DisplayWeight);
+    }
+
+    [Fact]
+    [Task(5)]
+    public void Apply_Default_tare_adjustment_and_get_display_weight()
+    {
+        var wm = new WeighingMachine(precision: 3);
+        wm.Weight = 100.567;
+        Assert.Equal("95.567 kg", wm.DisplayWeight);
     }
 
     [Fact]

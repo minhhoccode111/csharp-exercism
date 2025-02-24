@@ -1,5 +1,4 @@
 using Exercism.Tests;
-using Xunit;
 
 public class SecureMunchesterUnitedTests
 {
